@@ -60,7 +60,7 @@
         this.scroll.finshPullUp()
       },
       ref111() {
-        console.log('----');
+        // console.log('----');
         this.scroll && this.scroll.refresh()
       },
       getY() {

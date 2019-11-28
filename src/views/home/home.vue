@@ -87,7 +87,7 @@
     deactivated() {
       // this.saveY = 1000
       this.saveY = this.$refs.scroll.getY()
-      console.log(this.saveY);
+      // console.log(this.saveY);
       // 2.取消全局事件的监听
       this.$bus.$off('itemImgLoad',this.itemImgListener)
     },

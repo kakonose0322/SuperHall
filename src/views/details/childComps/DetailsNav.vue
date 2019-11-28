@@ -30,6 +30,7 @@
     methods: {
       titieClick(index) {
         this.currentIndex = index
+        this.$emit('titieClick',index)
       },
       backClick() {
         this.$router.back()
