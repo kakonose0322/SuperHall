@@ -19,6 +19,8 @@
     </scroll>
     <back-top @click.native="backTop" v-show="isShowBackTop"></back-top>
     <detail-bottom-bar @addToCart="addToCart"/>
+    <toast :message="message" :show="show"></toast>
+    <!--<toast message="message"></toast>-->
   </div>
 </template>
 
@@ -29,6 +31,7 @@
   import DetailBaseInfo from './childComps/DetailBaseInfo'
   import DetailShopInfo from './childComps/DetailShopInfo'
   import scroll from 'components/common/scroll/scroll'
+  import Toast from 'components/common/toast/Toast'
   import DetailGoodsInfo from './childComps/DetailGoodsInfo'
   import DetailParamInfo from './childComps/DetailParamInfo'
   import DetailCommentInfo from './childComps/DetailCommentInfo'
@@ -36,6 +39,7 @@
   import {debounce} from 'common/utils'
   import DetailBottomBar from './childComps/DetailBottomBar'
   import BackTop from 'components/content/backtop/BackTop'
+  import { mapActions } from 'vuex'
   export default {
     name: "Details",
     data() {
@@ -51,7 +55,9 @@
         recommends: [],
         itemImgListener: null,
         themeTopYs: [0,1000,2000,3000],
-        isShowBackTop: false
+        isShowBackTop: false,
+        message: '',
+        show: false
       }
     },
     created() {
@@ -62,11 +68,12 @@
       getDetails(this.iid).then(res => {
         // console.log(res);
         const data = res.result
-        // console.log(data);
+        // console.log(data.itemInfo.lowPrice);
         // console.log(res.result.itemInfo);
         // 顶部轮播图数据
         this.topImages = res.result.itemInfo.topImages
         // 2.获取商品数据 res.result.itemInfo
+        // console.log(data.itemInfo);
         this.goods = new Goods(data.itemInfo,data.columns,data.shopInfo.services)
         // 3.获取店铺信息
         this.shop = new Shop(data.shopInfo)
@@ -115,9 +122,14 @@
       DetailCommentInfo,
       GoodsList,
       DetailBottomBar,
-      BackTop
+      BackTop,
+      Toast
     },
     methods: {
+      // ...mapActions({
+      //   add: 'addCart'
+      // }),
+      ...mapActions(['addCart']),
       imageLoad() {
         this.$refs.scroll.ref111()
         this.themeTopYs = []
@@ -175,15 +187,35 @@
         product.image = this.topImages[0]
         product.title = this.goods.title
         product.desc = this.goods.desc
-        product.price = this.goods.newPrice
+        product.price = this.goods.lowPrice
         product.iid = this.iid
+        // console.log(product.price);
 
         // 2.将商品加入到购物车中
         // 注意这里虽然可以使用push直接插入数组到cartlist但不推荐
         // 这里是之前发送给mutation的方法
         // this.$store.commit('addCart',product)
         // 现在发送给actions
-        this.$store.dispatch('addCart',product)
+        // this.$store.dispatch('addCart',product).then(res => {
+        //   console.log(res);
+        // })
+        // 利用getActions实现addCart
+        this.addCart(product).then(res => {
+          // console.log(product);
+          // 提取为插件前的方法
+          // this.show = true;
+          // this.message = res
+          // // 设置延迟消失
+          // setTimeout(() => {
+          //   this.show = false;
+          //   this.message = ''
+          // },1500)
+          // this.$toast.show(res,1500)
+          this.$toast.show(res)
+        })
+
+        // 3.添加到购物车成功（弹出层）
+
       }
     },
     // updated() {

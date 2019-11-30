@@ -166,7 +166,7 @@
         this.isTabFixed = (-position.y) > this.tabOffsetTop
       },
       loadMore() {
-        console.log('More');
+        // console.log('More');
         this.getHomeGoods(this.currentType)
         this.$refs.scroll.scroll.refresh()
       },
